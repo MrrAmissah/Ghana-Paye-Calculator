@@ -4,7 +4,7 @@ Client-side income tax calculator for Ghana — enter your monthly salary, get y
 
 **Live demo:** https://ghana-paye-calculator.vercel.app
 
-![screenshot](./screenshot.png)
+![screenshot](./ghana-paye-calculator-preview.png)
 
 ## What it calculates
 
