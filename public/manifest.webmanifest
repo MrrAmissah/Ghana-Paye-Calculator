@@ -1,0 +1,41 @@
+{
+  "name": "Ghana PAYE Calculator",
+  "short_name": "Ghana PAYE",
+  "description": "Estimate Ghana PAYE, SSNIT, deductions, and take-home pay using 2026 GRA tax bands.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F7F1E8",
+  "theme_color": "#B45309",
+  "categories": ["finance", "productivity", "business"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/maskable-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Ghana PAYE Calculator"
+    }
+  ]
+}
