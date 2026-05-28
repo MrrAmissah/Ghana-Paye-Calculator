@@ -18,6 +18,14 @@ function fmtRaw(amount: number): string {
   return 'GH₵ ' + amount.toLocaleString('en-GH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
+function fmtPct(percent: number): string {
+  return `${percent.toFixed(1)}%`
+}
+
+function fmtRate(rate: number): string {
+  return fmtPct(rate * 100)
+}
+
 function buildSummaryText(result: PayrollResult, annual: boolean): string {
   const f = (n: number) => fmt(n, annual)
   const period = annual ? 'Annual' : 'Monthly'
@@ -36,7 +44,7 @@ function buildSummaryText(result: PayrollResult, annual: boolean): string {
     '',
     `Net Take-Home:      ${f(result.netPay)}`,
     '─────────────────────────────────',
-    `Effective Rate:     ${((result.paye / result.gross) * 100).toFixed(1)}%`,
+    `Effective Rate:     ${fmtPct((result.paye / result.gross) * 100)}`,
     '',
     'Estimate only · 2026 GRA bands · gra.gov.gh',
   )
@@ -80,7 +88,7 @@ function DonutChart({ result }: { result: PayrollResult }) {
       )}
       <text x={CX} y={CY + 2} textAnchor="middle" fill="white"
         fontSize="23" fontWeight="700" fontFamily="Inter, system-ui, sans-serif">
-        {Math.round(netPct * 100)}%
+        {fmtPct(netPct * 100)}
       </text>
       <text x={CX} y={CY + 18} textAnchor="middle" fill="rgba(255,255,255,0.62)"
         fontSize="8" fontWeight="600" fontFamily="Inter, system-ui, sans-serif">of gross</text>
@@ -114,7 +122,7 @@ function HeroCard({ result, annual }: { result: PayrollResult; annual: boolean }
             <div>
               <div className="mb-1 flex items-center justify-between text-xs text-white/70">
                 <span>Net pay ratio</span>
-                <span className="font-semibold text-white">{netPct.toFixed(1)}%</span>
+                <span className="font-semibold text-white">{fmtPct(netPct)}</span>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-white/15">
                 <div
@@ -182,8 +190,8 @@ function MetricIcon({ color, children }: { color: string; children: ReactNode })
 
 function MetricGrid({ result, annual }: { result: PayrollResult; annual: boolean }) {
   const deductions    = result.ssnit + result.paye + result.tier3
-  const effectiveRate = result.gross > 0 ? ((result.paye / result.gross) * 100).toFixed(1) : '0.0'
-  const dedRate       = result.gross > 0 ? ((deductions / result.gross) * 100).toFixed(1) : '0.0'
+  const effectiveRate = result.gross > 0 ? fmtPct((result.paye / result.gross) * 100) : fmtPct(0)
+  const dedRate       = result.gross > 0 ? fmtPct((deductions / result.gross) * 100) : fmtPct(0)
 
   const cards: { label: string; value: string; sub: string; color: string; icon: ReactNode }[] = [
     {
@@ -215,7 +223,7 @@ function MetricGrid({ result, annual }: { result: PayrollResult; annual: boolean
     {
       label: 'PAYE Tax',
       value: fmt(result.paye, annual),
-      sub:   `${effectiveRate}% of gross`,
+      sub:   `${effectiveRate} of gross`,
       color: 'var(--color-tax)',
       icon: (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -251,7 +259,7 @@ function MetricGrid({ result, annual }: { result: PayrollResult; annual: boolean
     {
       label: 'Total Deductions',
       value: fmt(deductions, annual),
-      sub:   `${dedRate}% of gross`,
+      sub:   `${dedRate} of gross`,
       color: 'var(--color-copper)',
       icon: (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -316,7 +324,7 @@ function BandTable({ result, annual }: { result: PayrollResult; annual: boolean 
                       'rounded-md px-2 py-1 text-xs font-bold tabular-nums',
                       band.rate === 0 ? 'bg-ok/10 text-ok' : active ? 'bg-tax/10 text-tax' : 'text-fore-3',
                     ].join(' ')}>
-                      {(band.rate * 100).toFixed(0)}%
+                      {fmtRate(band.rate)}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right text-xs font-semibold tabular-nums text-fore-2">
@@ -360,7 +368,7 @@ function ContributionTable({ result, annual }: { result: PayrollResult; annual: 
       <div className="divide-y divide-edge/40">
         {[
           { label: 'Employee SSNIT (5.5%)', value: fmt(result.ssnit, annual), color: 'var(--color-ssnit)' },
-          { label: 'Employer SSNIT (13%)',  value: fmt(employerSSNIT, annual), color: 'var(--color-ssnit)' },
+          { label: 'Employer SSNIT (13.0%)',  value: fmt(employerSSNIT, annual), color: 'var(--color-ssnit)' },
           ...(result.tier3 > 0 ? [{ label: 'Voluntary Tier 3', value: fmt(result.tier3, annual), color: 'var(--color-tier3)' }] : []),
           { label: 'PAYE tax', value: fmt(result.paye, annual), color: 'var(--color-tax)' },
           { label: 'Total employee deductions', value: fmt(employeeDeductions, annual), color: 'var(--color-copper)', bold: true },
@@ -378,17 +386,17 @@ function ContributionTable({ result, annual }: { result: PayrollResult; annual: 
 // ── Quick Facts ────────────────────────────────────────────────────────────
 
 function QuickFacts({ result, annual }: { result: PayrollResult; annual: boolean }) {
-  const netPct  = result.gross > 0 ? ((result.netPay / result.gross) * 100).toFixed(1) : '0.0'
-  const effRate = result.gross > 0 ? ((result.paye  / result.gross) * 100).toFixed(1) : '0.0'
+  const netPct  = result.gross > 0 ? fmtPct((result.netPay / result.gross) * 100) : fmtPct(0)
+  const effRate = result.gross > 0 ? fmtPct((result.paye  / result.gross) * 100) : fmtPct(0)
   const topBand = [...result.bands].reverse().find(b => b.income > 0)
   const employerSSNIT = Math.round(result.basic * 0.13 * 100) / 100
 
   const facts = [
-    `You keep ${netPct}% of gross income.`,
-    `Effective PAYE rate: ${effRate}% of gross.`,
+    `You keep ${netPct} of gross income.`,
+    `Effective PAYE rate: ${effRate} of gross.`,
     topBand && topBand.rate > 0
-      ? `Top marginal band: ${(topBand.rate * 100).toFixed(0)}%.`
-      : 'Income is in the 0% tax-free band.',
+      ? `Top marginal band: ${fmtRate(topBand.rate)}.`
+      : 'Income is in the 0.0% tax-free band.',
     !annual ? `Annual take-home: ${fmtRaw(result.netPay * 12)}.` : null,
     `Employer SSNIT: ${fmt(employerSSNIT, annual)} toward your pension.`,
   ].filter(Boolean) as string[]

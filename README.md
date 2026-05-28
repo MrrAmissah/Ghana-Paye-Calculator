@@ -1,79 +1,102 @@
 # Ghana PAYE Calculator
 
-Client-side income tax calculator for Ghana — enter your monthly salary, get your SSNIT deduction, PAYE breakdown by band, and net take-home instantly.
-
 **Live demo:** https://ghana-paye-calculator.vercel.app
 
-![screenshot](./ghana-paye-calculator-preview.png)
+![Ghana PAYE Calculator preview](./ghana-paye-calculator-preview.png)
 
-## What it calculates
+A client-side Ghana payroll and income tax dashboard for estimating PAYE, SSNIT, voluntary Tier 3 deductions, and net take-home pay from monthly salary details.
 
-Given a monthly basic salary (plus optional allowances and a voluntary Tier 3 contribution):
+> **Estimate only.** This calculator is based on 2026 Ghana Revenue Authority (GRA) monthly income tax bands and the SSNIT employee Tier 1 rate. It does not account for overtime, bonuses, back-pay, reliefs, or other non-standard payroll items. Always confirm with the Ghana Revenue Authority (GRA) or a licensed tax professional.
 
-| Output | Description |
+## Features
+
+| Feature | Description |
 |---|---|
-| Gross Income | Basic + allowances |
-| SSNIT — Tier 1 | 5.5% of basic salary only (not allowances) |
-| Chargeable Income | Gross − SSNIT − Tier 3 |
-| PAYE | Progressive tax across applicable bands |
-| Net Take-Home | Gross − SSNIT − PAYE − Tier 3 |
+| Salary inputs | Enter monthly basic salary, optional allowances, and optional voluntary Tier 3 contribution. |
+| Tier 3 cap handling | Voluntary Tier 3 is capped at 16.5% of basic salary and the UI warns when the cap applies. |
+| Monthly / annual toggle | Switch every displayed value between monthly and annual views. |
+| Net-pay dashboard | Shows take-home pay prominently with a take-home/deductions donut chart. |
+| Tax breakdown table | Displays each GRA band, rate, taxable amount, and tax due from the live calculation state. |
+| Contribution summary | Shows employee SSNIT, employer SSNIT, Tier 3, PAYE, and total employee deductions. |
+| Quick facts | Explains useful assumptions such as net-pay percentage, effective PAYE rate, and top marginal band. |
+| Copy summary | Copies the current calculated payslip summary to the clipboard. |
+| Print payslip | Opens a print-ready payslip view with form controls hidden. |
+| Dark mode | Supports a deep espresso/charcoal dark theme while keeping print output light and readable. |
+
+## Calculation Flow
+
+Given a monthly basic salary, optional allowances, and optional voluntary Tier 3 contribution:
+
+| Step | Formula / rule |
+|---|---|
+| Gross income | Basic salary + allowances |
+| Employee SSNIT Tier 1 | 5.5% of basic salary only |
+| Voluntary Tier 3 | User input capped at 16.5% of basic salary |
+| Chargeable income | Gross income - SSNIT Tier 1 - voluntary Tier 3 |
+| PAYE tax | 2026 GRA monthly bands applied progressively to chargeable income |
+| Net take-home pay | Gross income - SSNIT Tier 1 - voluntary Tier 3 - PAYE tax |
+
+SSNIT Tier 1 at **5.5%** is deducted before the PAYE bands apply.
 
 ## 2026 GRA Monthly Income Tax Bands
 
-| Band | Rate |
-|---|---|
-| First GH₵ 490.00 | 0% |
-| Next GH₵ 110.00 | 5% |
-| Next GH₵ 130.00 | 10% |
-| Next GH₵ 3,166.67 | 17.5% |
-| Next GH₵ 16,000.00 | 25% |
-| Next GH₵ 30,520.00 | 30% |
-| Above GH₵ 50,416.67 | 35% |
+| Band | Monthly taxable amount | Rate |
+|---|---:|---:|
+| First band | First GH₵ 490.00 | 0.0% |
+| Second band | Next GH₵ 110.00 | 5.0% |
+| Third band | Next GH₵ 130.00 | 10.0% |
+| Fourth band | Next GH₵ 3,166.67 | 17.5% |
+| Fifth band | Next GH₵ 16,000.00 | 25.0% |
+| Sixth band | Next GH₵ 30,520.00 | 30.0% |
+| Top band | Above GH₵ 50,416.67 | 35.0% |
 
-Bands are defined in a single exported array in `src/lib/paye.ts` — one edit when GRA revises the rates.
+Data source: **Ghana Revenue Authority (GRA)**.
 
-## Sanity check
+The band definitions are maintained in `src/lib/paye.ts`.
 
-Monthly basic **GH₵ 5,000** (no allowances, no Tier 3):
+## Example
 
-| | |
-|---|---|
-| SSNIT | GH₵ 275.00 |
-| Chargeable income | GH₵ 4,725.00 |
-| PAYE | GH₵ 779.75 |
-| Net take-home | GH₵ 3,945.25 |
+For monthly basic salary **GH₵ 12,000.00**, allowances **GH₵ 2,000.00**, and voluntary Tier 3 **GH₵ 1,500.00**, the calculator shows:
 
-## Tech stack
+| Output | Monthly value |
+|---|---:|
+| Gross income | GH₵ 14,000.00 |
+| Employee SSNIT Tier 1 | GH₵ 660.00 |
+| Voluntary Tier 3 | GH₵ 1,500.00 |
+| Chargeable income | GH₵ 11,840.00 |
+| PAYE tax | GH₵ 2,558.50 |
+| Net take-home pay | GH₵ 9,281.50 |
+
+## Tech Stack
 
 | Tool | Purpose |
 |---|---|
-| Vite 6 | Build tool & dev server |
-| React 19 | UI framework |
+| Vite | Build tool and development server |
+| React | UI framework |
 | TypeScript | Type safety |
-| Tailwind CSS v4 | Styling with custom design tokens |
-| Vitest | Unit testing |
+| Tailwind CSS | Styling and design tokens |
+| Vitest | Unit tests for PAYE calculation logic |
+| Vercel | Production hosting |
 
-## Run locally
+## Run Locally
 
 ```bash
 npm install
-npm run dev       # dev server → http://localhost:5173
-npm run build     # production build
-npm run preview   # preview production build
+npm run dev
 ```
 
-## Tests
+Common commands:
 
 ```bash
 npm run test
+npm run lint
+npm run build
+npm run preview
 ```
 
-Covers: zero salary, salary in the 0% band, the spec sanity-check (basic GH₵ 5,000), high salary reaching the 35% band, allowances, Tier 3 (including the 16.5% cap), and negative input clamping.
+## Test Coverage
 
----
-
-> **Estimate only.** Based on 2026 GRA monthly income tax bands and the 5.5% SSNIT employee Tier 1 rate. Does not account for overtime, bonuses, or back-pay. Always confirm with the [Ghana Revenue Authority (GRA)](https://gra.gov.gh) or a licensed tax professional.
-> **Data source: GRA.**
+The calculation tests cover zero salary, income in the 0.0% band, a sanity-check salary, high salary reaching the 35.0% band, allowances, Tier 3 cap behavior, and negative input clamping.
 
 ## License
 
