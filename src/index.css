@@ -1,70 +1,116 @@
 @import "tailwindcss";
 
 @theme {
-  --color-canvas:  #0B1118;
-  --color-panel:   #111A24;
-  --color-raised:  #162231;
-  --color-edge:    #253447;
-  --color-edge-hi: #33465F;
-  --color-fore:    #E6EDF3;
-  --color-fore-2:  #A8B3C2;
-  --color-fore-3:  #748196;
-  --color-gold:    #F59E0B;
-  --color-ok:      #22C55E;
-  --color-deduct:  #F97316;
-  --color-paye:    #EF4444;
-  --color-tier3:   #38BDF8;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* Light mode (default) */
+  --color-canvas:      #F7F1E8;
+  --color-panel:       #FFFCF7;
+  --color-raised:      #F3E8D8;
+  --color-edge:        #E5D6C3;
+  --color-edge-hi:     #CFAE8B;
+  --color-fore:        #241A12;
+  --color-fore-2:      #6F5A45;
+  --color-fore-3:      #9A8068;
+  --color-copper:      #B45309;
+  --color-copper-dark: #8A3A05;
+  --color-copper-soft: #FFF3E4;
+  --color-gold:        #D97706;
+  --color-ok:          #15803D;
+  --color-tax:         #B91C1C;
+  --color-ssnit:       #1D4ED8;
+  --color-tier3:       #0F766E;
 }
 
 @layer base {
-  :root[data-theme="light"] {
-    --color-canvas:  #F5F3EE;
-    --color-panel:   #FFFFFF;
-    --color-raised:  #FAF8F4;
-    --color-edge:    #E0D8CC;
-    --color-edge-hi: #C8BFB0;
-    --color-fore:    #1A140A;
-    --color-fore-2:  #4A3F30;
-    --color-fore-3:  #8A7C6A;
-    --color-gold:    #B45309;
-    --color-ok:      #16A34A;
-    --color-deduct:  #EA580C;
-    --color-paye:    #DC2626;
-    --color-tier3:   #0284C7;
-    --dot-color:     rgba(26, 20, 10, 0.045);
-    color-scheme: light;
+  html[data-theme="dark"] {
+    --color-canvas:      #16110D;
+    --color-panel:       #211812;
+    --color-raised:      #2A1E16;
+    --color-edge:        #4A3526;
+    --color-edge-hi:     #6B4C35;
+    --color-fore:        #FFF7ED;
+    --color-fore-2:      #D6C0A8;
+    --color-fore-3:      #9F8770;
+    --color-copper:      #FB923C;
+    --color-copper-dark: #F97316;
+    --color-copper-soft: #2A1A06;
+    --color-gold:        #FBBF24;
+    --color-ok:          #22C55E;
+    --color-tax:         #EF4444;
+    --color-ssnit:       #60A5FA;
+    --color-tier3:       #2DD4BF;
   }
 
   *, *::before, *::after { box-sizing: border-box; }
-  html { color-scheme: dark; }
+  html { color-scheme: light; }
+  html[data-theme="dark"] { color-scheme: dark; }
 
   body {
     margin: 0;
     background-color: var(--color-canvas);
     color: var(--color-fore);
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
-    background-image: radial-gradient(
-      var(--dot-color, rgba(148, 163, 184, 0.05)) 1px,
-      transparent 1px
-    );
-    background-size: 24px 24px;
+    background-image: url('/bg.png');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
   }
 
-  :root[data-theme="light"] .bg-panel.rounded {
-    box-shadow: 0 1px 3px rgba(26,20,10,0.07), 0 1px 2px rgba(26,20,10,0.04);
-  }
-  :root[data-theme="light"] header.bg-panel {
-    box-shadow: 0 1px 6px rgba(26,20,10,0.07);
-  }
-  :root:not([data-theme="light"]) .bg-panel.rounded {
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+  html[data-theme="dark"] body {
+    background-image: none;
   }
 
-  /* hide browser number spinners */
   input[type="number"] { -moz-appearance: textfield; }
   input[type="number"]::-webkit-outer-spin-button,
   input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  @media print {
+    html {
+      --color-canvas:      #FFFFFF !important;
+      --color-panel:       #FFFCF7 !important;
+      --color-raised:      #F3E8D8 !important;
+      --color-edge:        #E5D6C3 !important;
+      --color-edge-hi:     #CFAE8B !important;
+      --color-fore:        #241A12 !important;
+      --color-fore-2:      #6F5A45 !important;
+      --color-fore-3:      #9A8068 !important;
+      --color-copper:      #B45309 !important;
+      --color-copper-dark: #8A3A05 !important;
+      --color-copper-soft: #FFF3E4 !important;
+      --color-gold:        #D97706 !important;
+      --color-ok:          #15803D !important;
+      --color-tax:         #B91C1C !important;
+      --color-ssnit:       #1D4ED8 !important;
+      --color-tier3:       #0F766E !important;
+    }
+    header, button, .no-print { display: none !important; }
+    html, body {
+      background: white !important;
+      background-image: none !important;
+      color: #241A12 !important;
+    }
+    main {
+      max-width: none !important;
+      padding: 0 !important;
+    }
+    main > div {
+      display: block !important;
+    }
+    * {
+      box-shadow: none !important;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+    section, table, tr, .rounded-xl, .rounded-2xl {
+      break-inside: avoid;
+    }
+    .backdrop-blur,
+    .backdrop-blur-xl {
+      backdrop-filter: none !important;
+    }
+  }
 }

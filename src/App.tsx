@@ -1,8 +1,18 @@
 import { useState, useEffect, useMemo } from 'react'
 import { computePayroll, type PayrollResult } from './lib/paye'
 import SalaryForm from './components/SalaryForm'
-import ResultSummary from './components/ResultSummary'
-import BandBreakdown from './components/BandBreakdown'
+import PayslipDashboard from './components/PayslipDashboard'
+
+function GhanaMark({ className = '' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <path d="M24 6v36M6 24h36" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+      <path d="M16 16c0-5.6 8-5.6 8 0 0 5.3-8 5.3-8 0Zm8 0c0-5.6 8-5.6 8 0 0 5.3-8 5.3-8 0ZM16 32c0-5.3 8-5.3 8 0 0 5.6-8 5.6-8 0Zm8 0c0-5.3 8-5.3 8 0 0 5.6-8 5.6-8 0Z" stroke="currentColor" strokeWidth="3.4" />
+      <path d="M16 24c-5.3 0-5.3-8 0-8M32 24c5.3 0 5.3 8 0 8M24 16c0-5.3 8-5.3 8 0M24 32c0 5.3-8 5.3-8 0" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" />
+      <circle cx="24" cy="24" r="3.4" fill="currentColor" />
+    </svg>
+  )
+}
 
 function SunIcon() {
   return (
@@ -29,10 +39,8 @@ function MoonIcon() {
 }
 
 export default function App() {
-  const [theme, setTheme] = useState<'dark' | 'light'>(() =>
-    (localStorage.getItem('paye-theme') as 'dark' | 'light') ?? 'dark'
-  )
-  const [annual, setAnnual]         = useState(false)
+  const [theme, setTheme] = useState<'dark' | 'light'>('light')
+  const [annual, setAnnual]           = useState(false)
   const [basicSalary, setBasicSalary] = useState('')
   const [allowances, setAllowances]   = useState('')
   const [tier3, setTier3]             = useState('')
@@ -52,40 +60,41 @@ export default function App() {
     })
   }, [basicSalary, allowances, tier3])
 
-  const tier3Cap = result ? Math.round(result.basic * 0.165 * 100) / 100 : 0
+  const tier3Cap     = result ? Math.round(result.basic * 0.165 * 100) / 100 : 0
+  const tier3Capped  = result?.tier3Capped ?? false
 
   return (
-    <div className="min-h-screen bg-canvas">
-      <header className="bg-panel sticky top-0 z-10 border-b border-edge">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
+    <div className="min-h-screen bg-canvas/55">
+      <header className="sticky top-0 z-10 border-b border-edge/80 bg-panel/90 shadow-sm backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-3 px-4 py-4 sm:flex-row sm:items-center sm:px-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-gold text-xs font-bold text-canvas select-none">
-              GH
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-copper text-white select-none shadow-md shadow-copper/20 ring-1 ring-white/30">
+              <GhanaMark className="h-7 w-7" />
             </div>
             <div>
-              <h1 className="text-sm font-semibold leading-tight text-fore">Ghana PAYE Calculator</h1>
-              <p className="text-[10px] text-fore-3">2026 GRA Tax Bands · Estimate only</p>
+              <h1 className="text-lg font-bold leading-tight text-fore">Ghana PAYE Calculator</h1>
+              <p className="text-xs text-fore-3">2026 GRA tax bands · Estimate only</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="flex overflow-hidden rounded border border-edge text-[10px] font-medium">
+          <div className="flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-end">
+            <div className="flex overflow-hidden rounded-lg border border-edge bg-panel text-xs font-semibold shadow-sm">
               <button
                 onClick={() => setAnnual(false)}
-                className={['px-3 py-1.5 transition-colors', !annual ? 'bg-gold text-canvas' : 'text-fore-3 hover:text-fore'].join(' ')}
+                className={['px-4 py-2 transition-colors', !annual ? 'bg-copper text-white shadow-sm' : 'text-fore-2 hover:text-fore'].join(' ')}
               >
                 Monthly
               </button>
               <button
                 onClick={() => setAnnual(true)}
-                className={['px-3 py-1.5 transition-colors', annual ? 'bg-gold text-canvas' : 'text-fore-3 hover:text-fore'].join(' ')}
+                className={['px-4 py-2 transition-colors', annual ? 'bg-copper text-white shadow-sm' : 'text-fore-2 hover:text-fore'].join(' ')}
               >
                 Annual
               </button>
             </div>
             <button
               onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
-              className="flex h-7 w-7 items-center justify-center rounded border border-edge text-fore-3 transition-colors hover:border-gold/40 hover:text-gold focus:outline-none"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-edge bg-panel text-fore-3 shadow-sm transition-colors hover:border-copper/40 hover:text-copper focus:outline-none"
               title="Toggle theme"
             >
               {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
@@ -94,8 +103,8 @@ export default function App() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-4 py-6">
-        <div className="grid gap-5 lg:grid-cols-[360px_1fr]">
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+        <div className="grid gap-6 lg:grid-cols-[390px_minmax(0,1fr)]">
           <SalaryForm
             basicSalary={basicSalary}
             allowances={allowances}
@@ -104,18 +113,14 @@ export default function App() {
             onAllowancesChange={setAllowances}
             onTier3Change={setTier3}
             tier3Cap={tier3Cap}
-            tier3Capped={result?.tier3Capped ?? false}
+            tier3Capped={tier3Capped}
           />
-
-          <div className="flex flex-col gap-5">
-            <ResultSummary result={result} annual={annual} />
-            {result && <BandBreakdown bands={result.bands} annual={annual} />}
-          </div>
+          <PayslipDashboard result={result} annual={annual} />
         </div>
 
-        <div className="mt-6 rounded border border-gold/20 bg-gold/5 px-4 py-3">
-          <p className="text-[11px] leading-relaxed text-fore-3">
-            <span className="font-semibold text-gold">Estimate only.</span>{' '}
+        <div className="mt-6 rounded-xl border border-copper/20 bg-copper-soft/90 px-5 py-4 shadow-sm backdrop-blur">
+          <p className="text-xs leading-relaxed text-fore-3">
+            <span className="font-semibold text-copper">Estimate only.</span>{' '}
             Based on 2026 GRA monthly income tax bands and the 5.5% SSNIT employee Tier 1 rate.
             Does not account for overtime, bonuses, back-pay, or other non-standard payroll items.
             Always confirm with the <span className="text-fore-2">Ghana Revenue Authority (GRA)</span> or a licensed tax professional.
