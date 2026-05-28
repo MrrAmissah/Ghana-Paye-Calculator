@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { computePayroll, type PayrollResult } from './lib/paye'
+import { computePayroll, type PayrollResult, MONTHLY_BANDS } from './lib/paye'
 import SalaryForm from './components/SalaryForm'
 import PayslipDashboard from './components/PayslipDashboard'
 
@@ -38,8 +38,150 @@ function MoonIcon() {
   )
 }
 
+function AboutModal({ onClose }: { onClose: () => void }) {
+  const fmt = (n: number) =>
+    n === Infinity ? '∞' : n.toLocaleString('en-GH', { minimumFractionDigits: 2 })
+
+  const cumulativeThreshold = MONTHLY_BANDS.reduce<number[]>((acc, b, i) => {
+    if (i === 0) return [b.limit]
+    const prev = acc[i - 1]
+    return [...acc, b.limit === Infinity ? Infinity : prev + b.limit]
+  }, [])
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div className="absolute inset-0 bg-fore/40 backdrop-blur-sm" />
+      <div
+        className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-edge bg-panel shadow-2xl"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-edge bg-panel px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-copper text-white shadow-md shadow-copper/20">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3" />
+                <line x1="8" y1="7" x2="8" y2="11.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                <circle cx="8" cy="4.8" r="0.8" fill="currentColor" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-fore">About this Calculator</h2>
+              <p className="text-xs text-fore-3">Ghana PAYE · 2026 GRA Tax Bands</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-edge text-fore-3 transition-colors hover:border-copper/40 hover:text-copper"
+            aria-label="Close"
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <line x1="1.5" y1="1.5" x2="10.5" y2="10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <line x1="10.5" y1="1.5" x2="1.5" y2="10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-6 p-6">
+          {/* What it does */}
+          <div>
+            <h3 className="mb-2 text-sm font-bold text-fore">What This Calculator Does</h3>
+            <p className="text-sm leading-relaxed text-fore-2">
+              Estimates your monthly net pay and PAYE (Pay As You Earn) income tax based on the{' '}
+              <span className="font-semibold text-copper">2026 Ghana Revenue Authority (GRA)</span>{' '}
+              tax bands. It accounts for SSNIT Tier 1 deductions and optional voluntary Tier 3
+              contributions, providing a detailed breakdown of your payslip.
+            </p>
+          </div>
+
+          {/* How it calculates */}
+          <div>
+            <h3 className="mb-3 text-sm font-bold text-fore">Calculation Method</h3>
+            <ol className="flex flex-col gap-2">
+              {[
+                ['SSNIT Tier 1', '5.5% of basic salary is deducted as your employee contribution.'],
+                ['Gross Income', 'Basic salary + all allowances.'],
+                ['Chargeable Income', 'Gross income − SSNIT − Tier 3 (voluntary, capped at 16.5% of basic).'],
+                ['PAYE Tax', 'Progressive rates applied to chargeable income using the 2026 GRA bands below.'],
+                ['Net Pay', 'Gross income − SSNIT − PAYE − Tier 3.'],
+              ].map(([step, desc], i) => (
+                <li key={i} className="flex gap-3">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-copper/10 text-xs font-bold text-copper">
+                    {i + 1}
+                  </span>
+                  <span className="text-sm leading-relaxed text-fore-2">
+                    <span className="font-semibold text-fore">{step}</span> — {desc}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          {/* Tax band table */}
+          <div>
+            <h3 className="mb-3 text-sm font-bold text-fore">2026 GRA Monthly Income Tax Bands</h3>
+            <div className="overflow-hidden rounded-xl border border-edge">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-edge bg-raised">
+                    <th className="py-2.5 pl-4 pr-3 text-left text-xs font-semibold text-fore-3">Band</th>
+                    <th className="px-3 py-2.5 text-right text-xs font-semibold text-fore-3">Rate</th>
+                    <th className="py-2.5 pl-3 pr-4 text-right text-xs font-semibold text-fore-3">Up to (cumulative)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {MONTHLY_BANDS.map((band, i) => (
+                    <tr key={i} className={i % 2 === 0 ? 'bg-panel' : 'bg-raised/50'}>
+                      <td className="py-2.5 pl-4 pr-3 font-medium text-fore">{band.label}</td>
+                      <td className="px-3 py-2.5 text-right font-semibold tabular-nums text-copper">
+                        {(band.rate * 100).toFixed(1)}%
+                      </td>
+                      <td className="py-2.5 pl-3 pr-4 text-right tabular-nums text-fore-2">
+                        {cumulativeThreshold[i] === Infinity
+                          ? 'Unlimited'
+                          : `GH₵ ${fmt(cumulativeThreshold[i])}`}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Limitations */}
+          <div className="rounded-xl border border-copper/20 bg-copper-soft/70 px-4 py-3">
+            <p className="text-xs font-semibold text-copper mb-1">Limitations</p>
+            <p className="text-xs leading-relaxed text-fore-3">
+              This tool does not account for overtime pay, bonuses, back-pay, or other non-standard
+              payroll items. Always confirm calculations with the{' '}
+              <span className="text-fore-2">Ghana Revenue Authority (GRA)</span> or a licensed tax
+              professional before making financial decisions.
+            </p>
+          </div>
+
+          {/* Credits */}
+          <div className="flex items-center justify-between border-t border-edge pt-4">
+            <div>
+              <p className="text-xs font-semibold text-fore">Ghana PAYE Calculator</p>
+              <p className="text-xs text-fore-3">Data source: Ghana Revenue Authority · 2026 tax year</p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-fore-3">Built by</p>
+              <p className="text-xs font-semibold text-copper">MrrAmissah</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>('light')
+  const [showAbout, setShowAbout]     = useState(false)
   const [annual, setAnnual]           = useState(false)
   const [basicSalary, setBasicSalary] = useState('')
   const [allowances, setAllowances]   = useState('')
@@ -93,6 +235,17 @@ export default function App() {
               </button>
             </div>
             <button
+              onClick={() => setShowAbout(true)}
+              className="flex h-9 items-center gap-1.5 rounded-full border border-edge bg-panel px-3.5 text-xs font-semibold text-fore-3 shadow-sm transition-colors hover:border-copper/40 hover:text-copper focus:outline-none"
+            >
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.2" />
+                <line x1="6" y1="5.5" x2="6" y2="8.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                <circle cx="6" cy="3.5" r="0.6" fill="currentColor" />
+              </svg>
+              About
+            </button>
+            <button
               onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
               className="flex h-9 w-9 items-center justify-center rounded-full border border-edge bg-panel text-fore-3 shadow-sm transition-colors hover:border-copper/40 hover:text-copper focus:outline-none"
               title="Toggle theme"
@@ -128,6 +281,8 @@ export default function App() {
           </p>
         </div>
       </main>
+
+      {showAbout && <AboutModal onClose={() => setShowAbout(false)} />}
     </div>
   )
 }
