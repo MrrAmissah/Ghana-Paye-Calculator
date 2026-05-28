@@ -78,13 +78,13 @@ function DonutChart({ result }: { result: PayrollResult }) {
           style={{ transform: `rotate(${-90 + netPct * 360}deg)`, transformOrigin: `${CX}px ${CY}px` }}
         />
       )}
-      <text x={CX} y={CY - 5} textAnchor="middle" fill="rgba(255,255,255,0.5)"
-        fontSize="9" fontFamily="Inter, system-ui, sans-serif">of gross</text>
-      <text x={CX} y={CY + 12} textAnchor="middle" fill="white"
-        fontSize="21" fontWeight="700" fontFamily="Inter, system-ui, sans-serif">
+      <text x={CX} y={CY + 2} textAnchor="middle" fill="white"
+        fontSize="23" fontWeight="700" fontFamily="Inter, system-ui, sans-serif">
         {Math.round(netPct * 100)}%
       </text>
-      <text x={CX} y={CY + 24} textAnchor="middle" fill="rgba(255,255,255,0.5)"
+      <text x={CX} y={CY + 18} textAnchor="middle" fill="rgba(255,255,255,0.62)"
+        fontSize="8" fontWeight="600" fontFamily="Inter, system-ui, sans-serif">of gross</text>
+      <text x={CX} y={CY + 29} textAnchor="middle" fill="rgba(255,255,255,0.52)"
         fontSize="8" fontFamily="Inter, system-ui, sans-serif">take-home</text>
     </svg>
   )
