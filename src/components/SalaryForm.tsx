@@ -153,7 +153,7 @@ export default function SalaryForm({
             </svg>
           </div>
           <p className="text-xs leading-relaxed text-fore-3">
-            <span className="font-semibold text-copper">SSNIT Tier 1</span> — 5.5% of your basic
+            <span className="font-semibold text-copper">SSNIT Tier 1</span> - 5.5% of your basic
             salary is deducted automatically. Your employer contributes an additional 13.0%.
           </p>
         </div>

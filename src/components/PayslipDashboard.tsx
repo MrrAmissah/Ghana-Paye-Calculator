@@ -7,7 +7,7 @@ interface Props {
   annual: boolean
 }
 
-// ── helpers ────────────────────────────────────────────────────────────────
+// helpers
 
 function fmt(amount: number, annual: boolean): string {
   const v = annual ? amount * 12 : amount
@@ -30,20 +30,20 @@ function buildSummaryText(result: PayrollResult, annual: boolean): string {
   const f = (n: number) => fmt(n, annual)
   const period = annual ? 'Annual' : 'Monthly'
   const lines: string[] = [
-    `Ghana PAYE Estimate — ${period}`,
-    '─────────────────────────────────',
+    `Ghana PAYE Estimate - ${period}`,
+    '=================================',
     `Basic Salary:       ${f(result.basic)}`,
   ]
   if (result.allowances > 0) lines.push(`Allowances:         ${f(result.allowances)}`)
   lines.push(`Gross Income:       ${f(result.gross)}`, '')
-  lines.push(`SSNIT (Tier 1):    −${f(result.ssnit)}`)
-  if (result.tier3 > 0) lines.push(`Tier 3 (Vol.):     −${f(result.tier3)}`)
+  lines.push(`SSNIT (Tier 1):    -${f(result.ssnit)}`)
+  if (result.tier3 > 0) lines.push(`Tier 3 (Vol.):     -${f(result.tier3)}`)
   lines.push(
-    `PAYE Tax:          −${f(result.paye)}`,
-    `Total Deductions:  −${f(result.ssnit + result.paye + result.tier3)}`,
+    `PAYE Tax:          -${f(result.paye)}`,
+    `Total Deductions:  -${f(result.ssnit + result.paye + result.tier3)}`,
     '',
     `Net Take-Home:      ${f(result.netPay)}`,
-    '─────────────────────────────────',
+    '=================================',
     `Effective Rate:     ${fmtPct((result.paye / result.gross) * 100)}`,
     '',
     'Estimate only · 2026 GRA bands · gra.gov.gh',
@@ -51,7 +51,7 @@ function buildSummaryText(result: PayrollResult, annual: boolean): string {
   return lines.join('\n')
 }
 
-// ── Donut Chart ────────────────────────────────────────────────────────────
+// Donut Chart
 
 function DonutChart({ result }: { result: PayrollResult }) {
   const R = 50, CX = 64, CY = 64
@@ -98,7 +98,7 @@ function DonutChart({ result }: { result: PayrollResult }) {
   )
 }
 
-// ── Hero Card ──────────────────────────────────────────────────────────────
+// Hero Card
 
 function HeroCard({ result, annual }: { result: PayrollResult; annual: boolean }) {
   const deductions = result.ssnit + result.paye + result.tier3
@@ -175,7 +175,7 @@ function HeroCard({ result, annual }: { result: PayrollResult; annual: boolean }
   )
 }
 
-// ── Metric Grid ────────────────────────────────────────────────────────────
+// Metric Grid
 
 function MetricIcon({ color, children }: { color: string; children: ReactNode }) {
   return (
@@ -289,7 +289,7 @@ function MetricGrid({ result, annual }: { result: PayrollResult; annual: boolean
   )
 }
 
-// ── Tax Band Breakdown ─────────────────────────────────────────────────────
+// Tax Band Breakdown
 
 function BandTable({ result, annual }: { result: PayrollResult; annual: boolean }) {
   const totalTax    = result.bands.reduce((s, b) => s + b.tax, 0)
@@ -328,11 +328,11 @@ function BandTable({ result, annual }: { result: PayrollResult; annual: boolean 
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right text-xs font-semibold tabular-nums text-fore-2">
-                    {active ? fmt(band.income, annual) : '—'}
+                    {active ? fmt(band.income, annual) : '-'}
                   </td>
                   <td className="px-4 py-3 text-right text-xs font-bold tabular-nums">
                     <span className={active && band.tax > 0 ? 'text-tax' : 'text-fore-3'}>
-                      {active ? fmt(band.tax, annual) : '—'}
+                      {active ? fmt(band.tax, annual) : '-'}
                     </span>
                   </td>
                 </tr>
@@ -353,7 +353,7 @@ function BandTable({ result, annual }: { result: PayrollResult; annual: boolean 
   )
 }
 
-// ── Contribution Summary ───────────────────────────────────────────────────
+// Contribution Summary
 
 function ContributionTable({ result, annual }: { result: PayrollResult; annual: boolean }) {
   const employerSSNIT = Math.round(result.basic * 0.13 * 100) / 100
@@ -383,7 +383,7 @@ function ContributionTable({ result, annual }: { result: PayrollResult; annual: 
   )
 }
 
-// ── Quick Facts ────────────────────────────────────────────────────────────
+// Quick Facts
 
 function QuickFacts({ result, annual }: { result: PayrollResult; annual: boolean }) {
   const netPct  = result.gross > 0 ? fmtPct((result.netPay / result.gross) * 100) : fmtPct(0)
@@ -423,7 +423,7 @@ function QuickFacts({ result, annual }: { result: PayrollResult; annual: boolean
   )
 }
 
-// ── Empty State ────────────────────────────────────────────────────────────
+// Empty State
 
 function EmptyState() {
   return (
@@ -471,7 +471,7 @@ function EmptyState() {
   )
 }
 
-// ── Main Export ────────────────────────────────────────────────────────────
+// Main Export
 
 export default function PayslipDashboard({ result, annual }: Props) {
   const [copied, setCopied] = useState(false)

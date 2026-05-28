@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest'
 import { computeSSNIT, applyBands, computePayroll } from './paye'
 
-// ─── helpers ────────────────────────────────────────────────────────────────
+// helpers
 
 function totalTax(bands: ReturnType<typeof applyBands>) {
   return bands.reduce((s, b) => s + b.tax, 0)
 }
 
-// ─── computeSSNIT ────────────────────────────────────────────────────────────
+// computeSSNIT
 
 describe('computeSSNIT', () => {
   it('is 5.5% of basic salary', () => {
@@ -22,7 +22,7 @@ describe('computeSSNIT', () => {
   })
 })
 
-// ─── applyBands ─────────────────────────────────────────────────────────────
+// applyBands
 
 describe('applyBands', () => {
   it('zero chargeable income produces all-zero bands', () => {
@@ -58,9 +58,9 @@ describe('applyBands', () => {
   })
 })
 
-// ─── computePayroll — spec sanity check ──────────────────────────────────────
+// computePayroll - spec sanity check
 
-describe('computePayroll — spec sanity check', () => {
+describe('computePayroll - spec sanity check', () => {
   it('basic 5,000 | no allowances | no Tier 3', () => {
     const r = computePayroll({ basicSalary: 5_000 })
     expect(r.ssnit).toBe(275)
@@ -70,9 +70,9 @@ describe('computePayroll — spec sanity check', () => {
   })
 })
 
-// ─── computePayroll — edge cases ─────────────────────────────────────────────
+// computePayroll - edge cases
 
-describe('computePayroll — zero salary', () => {
+describe('computePayroll - zero salary', () => {
   it('all outputs are zero', () => {
     const r = computePayroll({ basicSalary: 0 })
     expect(r.gross).toBe(0)
@@ -83,7 +83,7 @@ describe('computePayroll — zero salary', () => {
   })
 })
 
-describe('computePayroll — salary entirely in 0% band', () => {
+describe('computePayroll - salary entirely in 0% band', () => {
   it('basic 490, no deductions beyond SSNIT → PAYE = 0', () => {
     const r = computePayroll({ basicSalary: 490 })
     expect(r.ssnit).toBe(26.95)           // 490 * 0.055
@@ -93,7 +93,7 @@ describe('computePayroll — salary entirely in 0% band', () => {
   })
 })
 
-describe('computePayroll — high salary reaching 35% band', () => {
+describe('computePayroll - high salary reaching 35% band', () => {
   it('basic 60,000 → reaches top band', () => {
     const r = computePayroll({ basicSalary: 60_000 })
     expect(r.ssnit).toBe(3_300)
@@ -108,18 +108,18 @@ describe('computePayroll — high salary reaching 35% band', () => {
   })
 })
 
-describe('computePayroll — with allowances', () => {
+describe('computePayroll - with allowances', () => {
   it('allowances increase gross and chargeable but SSNIT is on basic only', () => {
     const r = computePayroll({ basicSalary: 3_000, allowances: 1_000 })
     expect(r.gross).toBe(4_000)
-    expect(r.ssnit).toBe(165)           // 3000 * 0.055 — NOT on allowances
+    expect(r.ssnit).toBe(165)           // 3000 * 0.055 - NOT on allowances
     expect(r.chargeableIncome).toBe(3_835)
     expect(r.paye).toBe(561.88)
     expect(r.netPay).toBe(3_273.12)
   })
 })
 
-describe('computePayroll — with Tier 3', () => {
+describe('computePayroll - with Tier 3', () => {
   it('Tier 3 reduces chargeable income and net pay', () => {
     const r = computePayroll({ basicSalary: 3_000, tier3: 200 })
     expect(r.tier3).toBe(200)
@@ -138,7 +138,7 @@ describe('computePayroll — with Tier 3', () => {
   })
 })
 
-describe('computePayroll — negative / invalid inputs', () => {
+describe('computePayroll - negative / invalid inputs', () => {
   it('clamps negative inputs to zero', () => {
     const r = computePayroll({ basicSalary: -500, allowances: -100, tier3: -50 })
     expect(r.basic).toBe(0)

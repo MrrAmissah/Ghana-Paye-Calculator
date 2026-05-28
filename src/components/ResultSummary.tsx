@@ -93,14 +93,14 @@ export default function ResultSummary({ result, annual }: Props) {
           <div className="mt-1 px-4 pb-0.5 pt-2">
             <span className="text-[9px] font-semibold uppercase tracking-widest text-fore-3">Deductions</span>
           </div>
-          <Row label="SSNIT — Tier 1 (5.5% of basic)" value={`− ${fmt(result.ssnit, annual)}`} color="text-deduct" sub />
+          <Row label="SSNIT - Tier 1 (5.5% of basic)" value={`- ${fmt(result.ssnit, annual)}`} color="text-deduct" sub />
           {result.tier3 > 0 && (
-            <Row label="Voluntary Tier 3" value={`− ${fmt(result.tier3, annual)}`} color="text-tier3" sub />
+            <Row label="Voluntary Tier 3" value={`- ${fmt(result.tier3, annual)}`} color="text-tier3" sub />
           )}
-          <Row label="PAYE" value={`− ${fmt(result.paye, annual)}`} color="text-paye" sub />
+          <Row label="PAYE" value={`- ${fmt(result.paye, annual)}`} color="text-paye" sub />
           <Row
             label="Total Deductions"
-            value={`− ${fmt(result.ssnit + result.paye + result.tier3, annual)}`}
+            value={`- ${fmt(result.ssnit + result.paye + result.tier3, annual)}`}
             color="text-deduct"
             bold
             separator

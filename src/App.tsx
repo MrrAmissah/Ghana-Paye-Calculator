@@ -104,16 +104,16 @@ function AboutModal({ onClose }: { onClose: () => void }) {
               {[
                 ['SSNIT Tier 1', '5.5% of basic salary is deducted as your employee contribution.'],
                 ['Gross Income', 'Basic salary + all allowances.'],
-                ['Chargeable Income', 'Gross income − SSNIT − Tier 3 (voluntary, capped at 16.5% of basic).'],
+                ['Chargeable Income', 'Gross income - SSNIT - Tier 3 (voluntary, capped at 16.5% of basic).'],
                 ['PAYE Tax', 'Progressive rates applied to chargeable income using the 2026 GRA bands below.'],
-                ['Net Pay', 'Gross income − SSNIT − PAYE − Tier 3.'],
+                ['Net Pay', 'Gross income - SSNIT - PAYE - Tier 3.'],
               ].map(([step, desc], i) => (
                 <li key={i} className="flex gap-3">
                   <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-copper/10 text-xs font-bold text-copper">
                     {i + 1}
                   </span>
                   <span className="text-sm leading-relaxed text-fore-2">
-                    <span className="font-semibold text-fore">{step}</span> — {desc}
+                    <span className="font-semibold text-fore">{step}</span> - {desc}
                   </span>
                 </li>
               ))}

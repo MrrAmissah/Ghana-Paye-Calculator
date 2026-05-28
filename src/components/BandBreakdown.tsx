@@ -62,11 +62,11 @@ export default function BandBreakdown({ bands, annual }: Props) {
                     </span>
                   </td>
                   <td className="px-4 py-2.5 text-right font-mono text-xs text-fore-2 tabular-nums">
-                    {active ? fmt(band.income, annual) : '—'}
+                    {active ? fmt(band.income, annual) : '-'}
                   </td>
                   <td className="px-4 py-2.5 text-right font-mono text-xs tabular-nums">
                     <span className={active && band.tax > 0 ? 'text-paye' : 'text-fore-3'}>
-                      {active ? fmt(band.tax, annual) : '—'}
+                      {active ? fmt(band.tax, annual) : '-'}
                     </span>
                   </td>
                 </tr>

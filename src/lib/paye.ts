@@ -1,4 +1,4 @@
-// Ghana PAYE calculation — 2026 GRA rates
+// Ghana PAYE calculation - 2026 GRA rates
 // Source: Ghana Revenue Authority (GRA)
 
 export interface Band {
@@ -20,7 +20,7 @@ export const MONTHLY_BANDS: Band[] = [
 ]
 
 export const SSNIT_RATE   = 0.055   // 5.5% of basic salary (Tier 1, employee share)
-export const TIER3_CAP    = 0.165   // 16.5% of basic — voluntary Tier 3 cap
+export const TIER3_CAP    = 0.165   // 16.5% of basic - voluntary Tier 3 cap
 
 export interface BandResult {
   label: string
