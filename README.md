@@ -2,7 +2,7 @@
 
 Client-side income tax calculator for Ghana — enter your monthly salary, get your SSNIT deduction, PAYE breakdown by band, and net take-home instantly.
 
-**Live demo:** _to be added after deploy_
+**Live demo:** https://ghana-paye-calculator.vercel.app
 
 ![screenshot](./screenshot.png)
 
